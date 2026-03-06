@@ -59,3 +59,13 @@ CREATE TABLE mort(
 );
 
 docker exec -it sqlserver /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Your_password123
+
+docker-compose down
+# supprimez le volume mssql créé par compose, par exemple:
+docker volume rm <NOM_DU_VOLUME_DB>   # ex: akoho_db_data
+
+Mettre un mot de passe SA fort dans docker-compose.yml (ex : SA_PASSWORD: "Str0ng!Passw0rd").
+Relancer :
+
+docker-compose up -d
+docker logs -f sqlserver   # attendre "SQL Server is now ready for client connections."
