@@ -57,3 +57,5 @@ CREATE TABLE mort(
     date_enregistrement DATE NOT NULL,
     FOREIGN KEY (idLot) REFERENCES lot(id)
 );
+
+docker exec -it sqlserver /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Your_password123
