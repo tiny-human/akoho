@@ -4,10 +4,7 @@ GO
 USE akoho;
 GO
 
-CREATE TABLE race (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    name NVARCHAR(255) NOT NULL
-);
+CREATE TABLE race (id INT IDENTITY(1,1) PRIMARY KEY,name NVARCHAR(255) NOT NULL);
 GO
 
 CREATE TABLE lot(
@@ -54,6 +51,7 @@ CREATE TABLE lot_oeuf(
     id INT IDENTITY(1,1) PRIMARY KEY,
     idOeuf INT NOT NULL,
     date_enregistrement DATE NOT NULL,
+    quantite INT NOT NULL,
     CONSTRAINT FK_lot_oeuf_oeuf FOREIGN KEY (idOeuf) REFERENCES oeuf(id)
 );
 GO

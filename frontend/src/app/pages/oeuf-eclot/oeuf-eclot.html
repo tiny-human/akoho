@@ -1,0 +1,56 @@
+<div class="container">
+    <h2>Eclore des oeufs</h2>
+    
+    <!-- Message de succès -->
+    @if (successMessage) {
+        <div class="alert success">{{ successMessage }}</div>
+    }
+    
+    <!-- Meslistsage d'erreur -->
+    @if (errorMessage) {
+        <div class="alert error">{{ errorMessage }}</div>
+    }
+    
+    <form (ngSubmit)="onSubmit()">
+    
+        <!-- Sélection du lot -->
+        <div class="form-group">
+            <label for="lot">Lot</label>
+            <select id="lot" [(ngModel)]="selectedLotId" name="selectedLotId"
+                    (ngModelChange)="onLotChange()" required>
+                <option [value]="0" disabled>-- Choisir un lot --</option>
+                @for (lot of lots; track lot.id) {
+                    <option [value]="lot.id">Lot #{{ lot.id }}</option>
+                }
+            </select>
+        </div>
+
+        <!-- Sélection de la portée d'oeufs (filtré par lot) -->
+        <div class="form-group">
+            <label for="oeuf">Portée d'oeufs</label>
+            <select id="oeuf" [(ngModel)]="lotOeuf.idOeuf" name="idOeuf"
+                    required [disabled]="oeufs.length === 0">
+                <option [value]="0" disabled>-- Choisir une portée --</option>
+                @for (oeuf of oeufs; track oeuf.id) {
+                    <option [value]="oeuf.id">{{ oeuf.quantite }} oeufs - {{ oeuf.date_ponte }}</option>
+                }
+            </select>
+        </div>
+    
+        <!-- Date d'éclosion -->
+        <div class="form-group">
+            <label for="date">Date d'éclosion</label>
+            <input type="date" id="date" [(ngModel)]="lotOeuf.date_enregistrement" name="date_enregistrement" required>
+        </div>
+
+            <!-- Quantité éclose -->
+            <div class="form-group">
+                <label for="quantite">Quantité éclose</label>
+                <input type="number" id="quantite" [(ngModel)]="lotOeuf.quantite" name="quantite"
+                       placeholder="Ex: 80" required min="0">
+            </div>
+
+        <!-- Bouton soumettre -->
+        <button type="submit">Eclore</button>
+    </form>
+</div>

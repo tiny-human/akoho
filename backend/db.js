@@ -5,7 +5,7 @@ const config = {
   user: process.env.DB_USER || 'sa',
   password: process.env.DB_PASSWORD || 'Your_password123',
   server: process.env.DB_HOST || 'db',
-  database: process.env.DB_NAME || 'mydb',
+  database: process.env.DB_NAME || 'akoho',
   port: parseInt(process.env.DB_PORT, 10) || 1433,
   options: {
     encrypt: false,

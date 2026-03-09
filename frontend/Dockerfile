@@ -2,16 +2,15 @@
 FROM node:20 AS development
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+COPY node_modules ./node_modules
 COPY . .
 EXPOSE 4200
-CMD ["npm", "run", "start", "--", "--host", "0.0.0.0", "--poll", "2000"]
-
+CMD ["npx", "ng", "serve", "--host", "0.0.0.0", "--poll", "2000"]
 # Stage de build
 FROM node:20 AS build
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+COPY node_modules ./node_modules
 COPY . .
 RUN npm run build
 

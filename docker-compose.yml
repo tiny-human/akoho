@@ -32,11 +32,10 @@ services:
       DB_HOST: db
       DB_USER: sa
       DB_PASSWORD: Your_password123
-      DB_NAME: mydb
+      DB_NAME: akoho
       PORT: 3000
     volumes:
       - ./backend:/usr/src/app
-      - /usr/src/app/node_modules
     networks:
       - app-network
     restart: unless-stopped
