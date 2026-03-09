@@ -1,0 +1,29 @@
+<div class="container">
+    <h2>Enregistrer des morts</h2>
+    @if (successMessage) {
+    <div class="alert success">{{ successMessage }}</div>
+    }
+    @if (errorMessage) {
+    <div class="alert error">{{ errorMessage }}</div>
+    }
+    <form (ngSubmit)="onSubmit()">
+        <div class="form-group">
+            <label for="lot">Lot</label>
+            <select id="lot" [(ngModel)]="lotMort.idLot" name="idLot" required>
+                <option [value]="0" disabled>-- Choisir un lot --</option>
+                @for (lot of lots; track lot.id) {
+                <option [value]="lot.id">Lot #{{ lot.id }} - {{ lot.quantite }} têtes ({{ lot.date_enregistrement }})
+                </option>
+                }
+            </select>
+            <label for="quantite">Quantité</label>
+            <input type="number" id="quantite" [(ngModel)]="lotMort.quantite" name="quantite" required>
+            <label for="date">Date d'enregistrement</label>
+            <input type="date" id="date" [(ngModel)]="lotMort.date_enregistrement" name="date_enregistrement" required>
+        </div>
+        <button type="submit">Ajouter</button>
+        <button><a routerLink="/ajouter-lot">Ajouter un lot</a></button>
+        <button><a routerLink="/resenser-oeuf">Resenser les oeufs</a></button>
+        <button><a routerLink="/oeuf-eclot">Eclore des oeufs</a></button>
+    </form>
+</div>

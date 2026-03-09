@@ -7,7 +7,7 @@ import {LotMort} from '../model/lotMort.model';
 @Injectable({ providedIn: 'root' })
 export class LotMortService {
 
-  private apiUrl = 'http://localhost:3000/api/lots-morts';
+  private apiUrl = 'http://localhost:3000/api/lot-morts';
 
   constructor(private http: HttpClient) {}
 

@@ -6,7 +6,7 @@ function modelToPlain(o) {
     return {
         id: o.getId ? o.getId() : undefined,
         idLot: o.getIdLot ? o.getIdLot() : undefined,
-        datePonte: o.getDatePonte ? o.getDatePonte() : undefined,
+        date_ponte: o.getDatePonte ? o.getDatePonte() : undefined,
         quantite: o.getQuantite ? o.getQuantite() : undefined
     };
 }
@@ -25,8 +25,7 @@ class OeufController {
     static async get(req, res) {
         try {
             const id = parseInt(req.params.id);
-            const tmp = { getId: () => id };
-            const item = await OeufDAO.getById(tmp);
+            const item = await OeufDAO.getById(id);
             if (!item) return res.status(404).json({ error: 'Oeuf non trouvé' });
             res.json(item);
         } catch (err) {
@@ -37,8 +36,8 @@ class OeufController {
 
     static async create(req, res) {
         try {
-            const { idLot, datePonte, quantite } = req.body;
-            const o = new OeufClass(idLot, datePonte, quantite);
+            const { idLot, date_ponte, quantite } = req.body;
+            const o = new OeufClass(idLot, date_ponte, quantite);
             const result = await OeufDAO.create(o);
             res.status(201).json({ ok: true, result });
         } catch (err) {
@@ -50,8 +49,8 @@ class OeufController {
     static async update(req, res) {
         try {
             const id = parseInt(req.params.id);
-            const { idLot, datePonte, quantite } = req.body;
-            const o = new OeufClass(idLot, datePonte, quantite);
+            const { idLot, date_ponte, quantite } = req.body;
+            const o = new OeufClass(idLot, date_ponte, quantite);
             o.setId(id);
             const result = await OeufDAO.update(o);
             res.json({ ok: true, result });
@@ -64,9 +63,7 @@ class OeufController {
     static async delete(req, res) {
         try {
             const id = parseInt(req.params.id);
-            const o = new OeufClass();
-            o.setId(id);
-            await OeufDAO.delete(o);
+            await OeufDAO.delete(id);
             res.status(204).end();
         } catch (err) {
             console.error(err);
@@ -77,8 +74,7 @@ class OeufController {
     static async findByLotId(req, res) {
         try {
             const idLot = parseInt(req.params.idLot);
-            const tmp = { getId: () => idLot };
-            const items = await OeufDAO.findByLotId(tmp);
+            const items = await OeufDAO.findByLotId(idLot);
             res.json(items.map(modelToPlain));
         } catch (err) {
             console.error(err);

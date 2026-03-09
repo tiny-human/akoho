@@ -47,6 +47,8 @@ CREATE TABLE conf_poids(
 );
 GO
 
+
+
 CREATE TABLE lot_oeuf(
     id INT IDENTITY(1,1) PRIMARY KEY,
     idOeuf INT NOT NULL,

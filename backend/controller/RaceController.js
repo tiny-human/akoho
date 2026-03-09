@@ -23,8 +23,7 @@ class RaceController {
   static async get(req, res) {
     try {
       const id = parseInt(req.params.id);
-      const tmp = { getId: () => id };
-      const race = await RaceDAO.getById(tmp);
+      const race = await RaceDAO.getById(id);
       if (!race) return res.status(404).json({ error: 'Race non trouvée' });
       res.json(race);
     } catch (err) {

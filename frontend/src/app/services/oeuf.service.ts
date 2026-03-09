@@ -28,4 +28,8 @@ export class OeufService {
   delete(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
-}0
+
+  findByLotId(idLot: number): Observable<Oeuf[]> {
+    return this.http.get<Oeuf[]>(`${this.apiUrl}/lot/${idLot}`);
+  }
+}

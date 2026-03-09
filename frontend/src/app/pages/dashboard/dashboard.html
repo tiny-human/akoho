@@ -1,0 +1,106 @@
+<div class="dashboard-container">
+
+  <!-- ── Navigation rapide ───────────────────────────────── -->
+  <nav class="nav-bar">
+    <a routerLink="/dashboard" class="nav-link active"> Dashboard</a>
+    <a routerLink="/ajouter-lot" class="nav-link"> Ajouter lot</a>
+    <a routerLink="/resenser-oeuf" class="nav-link"> Recenser œufs</a>
+    <a routerLink="/oeuf-eclot" class="nav-link"> Éclosion</a>
+    <a routerLink="/ajouter-mort" class="nav-link"> Morts</a>
+  </nav>
+
+  <h2> Dashboard — Suivi des lots</h2>
+
+  <!-- ── Filtre par date ─────────────────────────────────── -->
+  <div class="filter-bar">
+    <label for="dateFin">État des lots au :</label>
+    <input
+      type="date"
+      id="dateFin"
+      [(ngModel)]="dateFin"
+      (change)="onFilterChange()"
+    />
+  </div>
+
+  <!-- ── Loading / Erreur ────────────────────────────────── -->
+  @if (loading) {
+    <div class="loading">Chargement…</div>
+  }
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
+
+  <!-- ── Tableau ─────────────────────────────────────────── -->
+  @if (!loading && rows.length > 0) {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Lot</th>
+            <th>Race</th>
+            <th>Têtes</th>
+            <th>Vivants</th>
+            <th>Sem.</th>
+            <th>PA (Ar)</th>
+            <th>Sakafo (Ar)</th>
+            <th>Morts</th>
+            <th>PMU (kg)</th>
+            <th>PML (kg)</th>
+            <th>PV poulets (Ar)</th>
+            <th>Œufs</th>
+            <th>Éclos</th>
+            <th>PV œufs (Ar)</th>
+            <th>Bénéfice (Ar)</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of rows; track r.idLot) {
+            <tr>
+              <td class="center">#{{ r.idLot }}</td>
+              <td>{{ r.raceName }}</td>
+              <td class="right">{{ r.quantite }}</td>
+              <td class="right">{{ r.quantiteVivante }}</td>
+              <td class="center">S{{ r.semaineActuelle }}</td>
+              <td class="right">{{ fmt(r.PA) }}</td>
+              <td class="right">{{ fmt(r.sakafo) }}</td>
+              <td class="center">{{ r.mort }}</td>
+              <td class="right">{{ fmt(r.PMU) }}</td>
+              <td class="right">{{ fmt(r.PML) }}</td>
+              <td class="right">{{ fmt(r.PV) }}</td>
+              <td class="center">{{ r.quantite_oeuf }}</td>
+              <td class="center">{{ r.oeufs_eclos }}</td>
+              <td class="right">{{ fmt(r.PV_oeuf) }}</td>
+              <td class="right" [class]="benefClass(r.benef)">
+                {{ fmt(r.benef) }}
+              </td>
+            </tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr class="totals">
+            <td colspan="5"><strong>TOTAUX</strong></td>
+            <td class="right"><strong>{{ fmt(totalPA) }}</strong></td>
+            <td class="right"><strong>{{ fmt(totalSakafo) }}</strong></td>
+            <td class="center"><strong>{{ totalMort }}</strong></td>
+            <td></td>
+            <td></td>
+            <td class="right"><strong>{{ fmt(totalPV) }}</strong></td>
+            <td class="center"><strong>{{ totalOeufs }}</strong></td>
+            <td class="center"><strong>{{ totalOeufsEclos }}</strong></td>
+            <td class="right"><strong>{{ fmt(totalPVOeuf) }}</strong></td>
+            <td class="right" [class]="benefClass(totalBenef)">
+              <strong>{{ fmt(totalBenef) }}</strong>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  }
+
+  <!-- ── Aucune donnée ───────────────────────────────────── -->
+  @if (!loading && rows.length === 0 && !error) {
+    <div class="empty">
+      Aucun lot enregistré pour cette date.
+    </div>
+  }
+</div>

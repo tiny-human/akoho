@@ -27,8 +27,7 @@ class LotController {
     static async get(req, res) {
         try {
             const id = parseInt(req.params.id);
-            const tmp = { getId: () => id };
-            const lot = await LotDAO.getById(tmp);
+            const lot = await LotDAO.getById(id);
             if (!lot) return res.status(404).json({ error: 'Lot non trouvé' });
             res.json(lot);
         } catch (err) {
@@ -66,9 +65,7 @@ class LotController {
     static async delete(req, res) {
         try {
             const id = parseInt(req.params.id);
-            const l = new LotClass();
-            l.setId(id);
-            await LotDAO.delete(l);
+            await LotDAO.delete(id);
             res.status(204).end();
         } catch (err) {
             console.error(err);
@@ -76,16 +73,5 @@ class LotController {
         }
     }
 
-    static async getOeufs(req, res) {
-        try {
-            const id = parseInt(req.params.id);
-            const tmp = { getId: () => id };
-            const oeufs = await LotDAO.getOeufs(tmp);
-            res.json(oeufs);
-        } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: 'Erreur lors de la récupération des oeufs du lot' });
-        }
-    }
 }
 module.exports = LotController;

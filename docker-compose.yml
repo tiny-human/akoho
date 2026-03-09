@@ -5,6 +5,8 @@ services:
     environment:
       SA_PASSWORD: "Your_password123"
       ACCEPT_EULA: "Y"
+      MSSQL_AGENT_ENABLED: "false"
+    command: /opt/mssql/bin/sqlservr -T272
     ports:
       - "1433:1433"
     volumes:

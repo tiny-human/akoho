@@ -4,12 +4,14 @@ import { LotService } from '../../services/lot.service';
 import { Lot } from '../../model/lot.model';
 import { Oeuf } from '../../model/oeuf.model';
 import { OeufService } from '../../services/oeuf.service';
+import { RouterModule } from '@angular/router';
+
 
 @Component({
   selector: 'app-resenser-oeuf',
   // "standalone" est le mode par défaut dans Angular 21
   // "imports" = les modules dont ce composant a besoin
-  imports: [FormsModule],
+  imports: [FormsModule,RouterModule],
   templateUrl: './resenser-oeuf.html',
   styleUrl: './resenser-oeuf.scss'
 })

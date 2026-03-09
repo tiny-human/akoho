@@ -6,10 +6,11 @@ import { Oeuf } from '../../model/oeuf.model';
 import { OeufService } from '../../services/oeuf.service';
 import { LotOeuf } from '../../model/lotOeuf.model';
 import { LotOeufService } from '../../services/lotOeuf.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-oeuf-eclot',
-  imports: [FormsModule],
+  imports: [FormsModule,RouterModule],
   templateUrl: './oeuf-eclot.html',
   styleUrl: './oeuf-eclot.scss'
 })
@@ -65,7 +66,7 @@ export class OeufEclotComponent implements OnInit {
         }
 
         // Charger les oeufs du lot sélectionné
-        this.lotService.getOeufsByLotId(this.selectedLotId).subscribe({
+        this.oeufService.findByLotId(this.selectedLotId).subscribe({
             next: (data) => {
                 this.oeufs = data;
                 if (data.length === 0) {
