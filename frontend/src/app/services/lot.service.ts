@@ -46,5 +46,7 @@ export class LotService {
     return this.http.get<Oeuf[]>(`${this.apiUrl}/${id}/oeufs`);
   }
 
-
+  getMortByLotId(id: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${id}/mort`);
+  }
 }
