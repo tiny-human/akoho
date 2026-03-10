@@ -3,6 +3,7 @@ const LotOeufClass = require('../model/LotOeuf');
 const OeufDAO = require('../dao/OeufDAO');
 const LotDAO = require('../dao/LotDAO');
 const LotClass = require('../model/Lot');
+const OeufDechetDAO = require('../dao/OeufDechetDAO');
 
 function modelToPlain(lo) {
   if (!lo) return null;
@@ -39,7 +40,7 @@ class LotOeufController {
 
   static async create(req, res) {
     try {
-      const { idOeuf, date_enregistrement, quantite } = req.body;
+      const { idOeuf, date_enregistrement, quantite, resteAction } = req.body;
 
       // 1. Enregistrer l'éclosion dans lot_oeuf
       const lo = new LotOeufClass(idOeuf, date_enregistrement, quantite);
@@ -55,18 +56,27 @@ class LotOeufController {
 
       // 4. Créer un nouveau lot de poussins (PA = 0, age = 0)
       const nouveauLot = new LotClass(
-        lotParent.idRace,       // même race
-        quantite,               // quantité = poussins éclos
-        date_enregistrement,    // date d'éclosion
-        0,                      // age = 0 semaine
-        0                       // PA = 0
+        lotParent.idRace,
+        quantite,
+        date_enregistrement,
+        0,
+        0
       );
       const lotCree = await LotDAO.create(nouveauLot);
+
+      // 5. Gérer le reste non-éclos si resteAction = 'jeter'
+      //    'vendre' → on ne fait rien (ils restent dans quantite_oeuf du dashboard)
+      //    'jeter'  → on les stocke dans oeuf_dechet (soustraits du dashboard)
+      let dechet = null;
+      if (resteAction === 'jeter' && req.body.resteQuantite > 0) {
+        dechet = await OeufDechetDAO.create(idOeuf, req.body.resteQuantite, date_enregistrement);
+      }
 
       res.status(201).json({
         ok: true,
         eclosion,
-        nouveauLot: lotCree
+        nouveauLot: lotCree,
+        dechet
       });
     } catch (err) {
       console.error(err);

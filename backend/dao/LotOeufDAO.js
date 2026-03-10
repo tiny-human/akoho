@@ -97,12 +97,6 @@ class LotOeufDAO {
     }
   }
 
-  /**
-   * Total oeufs éclos par lot parent (≤ dateFin), groupé par idLot du parent
-   * Un oeuf éclos appartient à un oeuf (lot_oeuf.idOeuf → oeuf.id),
-   * et cet oeuf appartient à un lot (oeuf.idLot).
-   * @returns {Object} { idLot: totalEclos, ... }
-   */
   static async sumEclosGroupedByLot(dateFin) {
     try {
       const pool = await poolPromise;

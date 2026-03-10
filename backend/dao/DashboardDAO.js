@@ -4,32 +4,16 @@ const OeufDAO = require('./OeufDAO');
 const LotOeufDAO = require('./LotOeufDAO');
 const ConfPoidsDAO = require('./ConfPoidsDAO');
 const ConfPrixDAO = require('./ConfPrixDAO');
+const OeufDechetDAO = require('./OeufDechetDAO');
 
-/**
- * DashboardDAO — agrège les données depuis les autres DAOs.
- * Pas de table propre : tout est calculé à la volée.
- *
- * Règles (par lot, jusqu'à dateFin) :
- *   sakafo       = Σ(ration_jour × jours) × PU_sakafo × quantité
- *   mort         = total morts enregistrées
- *   PMU          = Σ VarPoids(S0→Sn) / nb_semaines
- *   PML          = PMU × (quantité − mort)
- *   PV           = PML × PvAkoho
- *   quantite_oeuf = oeufs_pondus − oeufs_eclos    ← les éclos ne comptent plus
- *   val_oeuf     = quantite_oeuf × PvOeuf
- *   bénéfice     = PV + val_oeuf − PA − sakafo
- */
+
 class DashboardDAO {
 
-  /**
-   * @param {string|null} dateFin  Date ISO (ex. '2026-03-09') — null = aujourd'hui
-   * @returns {Promise<Array<Object>>}
-   */
   static async getDashboard(dateFin = null) {
     const filterDate = dateFin ? new Date(dateFin) : new Date();
 
     // ── Récupérer toutes les données nécessaires en parallèle ────────
-    const [lots, confPoidsMap, confPrixMap, mortsByLot, oeufsByLot, eclosByLot] =
+    const [lots, confPoidsMap, confPrixMap, mortsByLot, oeufsByLot, eclosByLot, dechetsByLot] =
       await Promise.all([
         LotDAO.findAllWithRace(),
         ConfPoidsDAO.findAllGroupedByRace(),
@@ -37,9 +21,9 @@ class DashboardDAO {
         LotMortDAO.sumGroupedByLot(filterDate),
         OeufDAO.sumGroupedByLot(filterDate),
         LotOeufDAO.sumEclosGroupedByLot(filterDate),
+        OeufDechetDAO.sumGroupedByLot(filterDate),
       ]);
 
-    // ── Calcul du dashboard ──────────────────────────────────────────
     const dashboard = [];
 
     for (const lot of lots) {
@@ -60,7 +44,6 @@ class DashboardDAO {
       const startWeek    = lot.age || 0;           // âge initial en semaines
       const currentWeek  = startWeek + Math.floor(elapsedDays / 7);
 
-      // ─── Sakafo (nourriture) ───────────────────────────────────────
       //   Pour chaque semaine : ration_hebdo / 7 × jours_effectifs
       //   Multiplié par PU_sakafo et quantité
       let totalSakafoWeight = 0;
@@ -81,11 +64,9 @@ class DashboardDAO {
       }
       const sakafo = totalSakafoWeight * (confPrix.PU_sakafo || 0) * lot.quantite;
 
-      // ─── Mort ──────────────────────────────────────────────────────
       const mort = mortsByLot[lot.id] || 0;
 
-      // ─── PMU (Poids Moyen Unitaire) ────────────────────────────────
-      //   Somme des VarPoids de S0 à Sn / nombre de semaines
+      //   Somme des VarPoids de S0 à S(currentWeek) / nombre de semaines
       let sumVarPoids = 0;
       let countWeeks  = 0;
       for (let w = 0; w <= currentWeek; w++) {
@@ -97,18 +78,16 @@ class DashboardDAO {
       }
       const PMU = countWeeks > 0 ? sumVarPoids / countWeeks : 0;
 
-      // ─── PML, PV ──────────────────────────────────────────────────
       const quantiteVivante = Math.max(0, lot.quantite - mort);
       const PML = PMU * quantiteVivante;
       const PV  = PML * (confPrix.PV || 0);
 
-      // ─── Œufs : total pondus − éclos ──────────────────────────────
-      const totalPondus = oeufsByLot[lot.id]  || 0;
-      const totalEclos  = eclosByLot[lot.id]  || 0;
-      const quantiteOeuf = Math.max(0, totalPondus - totalEclos);
+      const totalPondus  = oeufsByLot[lot.id]   || 0;
+      const totalEclos   = eclosByLot[lot.id]   || 0;
+      const totalDechets = dechetsByLot[lot.id]  || 0;
+      const quantiteOeuf = Math.max(0, totalPondus - totalEclos - totalDechets);
       const PV_oeuf = quantiteOeuf * (confPrix.PV_oeuf || 0);
 
-      // ─── Bénéfice ─────────────────────────────────────────────────
       const benef = PV + PV_oeuf - (lot.prix_achat || 0) - sakafo;
 
       dashboard.push({

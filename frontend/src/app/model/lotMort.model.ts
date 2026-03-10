@@ -1,6 +1,6 @@
 export interface LotMort {
     id?: number;
     idLot: number;
-    date_enregistrement: string;  // format "YYYY-MM-DD"
+    date_enregistrement: string;  
     quantite: number;
 }

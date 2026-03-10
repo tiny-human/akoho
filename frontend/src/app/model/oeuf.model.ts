@@ -1,6 +1,6 @@
 export interface Oeuf {
     id?: number;
     idLot: number;
-    date_ponte: string;  // format "YYYY-MM-DD"
+    date_ponte: string;  
     quantite: number;
 }

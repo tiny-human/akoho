@@ -1,110 +1,111 @@
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';           // pour [(ngModel)]
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { LotService } from '../../services/lot.service';
 import { Lot } from '../../model/lot.model';
 import { Oeuf } from '../../model/oeuf.model';
 import { OeufService } from '../../services/oeuf.service';
 import { LotOeuf } from '../../model/lotOeuf.model';
 import { LotOeufService } from '../../services/lotOeuf.service';
-import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-oeuf-eclot',
-  imports: [FormsModule,RouterModule],
+  imports: [FormsModule, RouterModule],
   templateUrl: './oeuf-eclot.html',
   styleUrl: './oeuf-eclot.scss'
 })
 export class OeufEclotComponent implements OnInit {
-    lotOeuf: LotOeuf = {
-        idOeuf: 0,
-        date_enregistrement: '',
-        quantite: 0
-    };
+  lotOeuf: LotOeuf = { idOeuf: 0, date_enregistrement: '', quantite: 0 };
+  selectedLotId: number = 0;
+  oeufs: Oeuf[] = [];
+  lots: Lot[] = [];
+  successMessage = '';
+  errorMessage = '';
 
-    // Lot sélectionné (pour le select cascade)
-    selectedLotId: number = 0;
+  showRestePopup = false;
+  resteQuantite = 0;
+  selectedOeufQuantite = 0;
 
-    // Oeufs filtrés par lot sélectionné (avec quantité restante)
-    oeufs: Oeuf[] = [];
-    // Tous les lots
-    lots: Lot[] = [];
+  constructor(
+    private oeufService: OeufService,
+    private lotService: LotService,
+    private lotOeufService: LotOeufService
+  ) {}
 
-    successMessage = '';
-    errorMessage = '';
+  ngOnInit(): void {
+    this.loadLots();
+  }
 
-    constructor(
-        private oeufService: OeufService,
-        private lotService: LotService,
-        private lotOeufService: LotOeufService
-    ) {}
+  loadLots(): void {
+    this.lotService.getAll().subscribe({
+      next: (data) => this.lots = data,
+      error: () => this.errorMessage = 'Impossible de charger les lots'
+    });
+  }
 
-    ngOnInit(): void {
-        this.loadLots();
+  onLotChange(): void {
+    this.lotOeuf.idOeuf = 0;
+    this.oeufs = [];
+    this.selectedOeufQuantite = 0;
+    if (!this.selectedLotId || this.selectedLotId === 0) return;
+
+    this.oeufService.findByLotIdWithRemaining(this.selectedLotId).subscribe({
+      next: (data) => {
+        this.oeufs = data;
+        this.errorMessage = data.length === 0 ? 'Aucun œuf restant pour ce lot' : '';
+      },
+      error: () => this.errorMessage = 'Impossible de charger les œufs de ce lot'
+    });
+  }
+
+  onOeufChange(): void {
+    const oeuf = this.oeufs.find(o => o.id == this.lotOeuf.idOeuf);
+    this.selectedOeufQuantite = oeuf ? oeuf.quantite : 0;
+  }
+
+  onSubmit(): void {
+    if (this.lotOeuf.quantite <= 0) {
+      this.errorMessage = 'La quantité doit être supérieure à 0';
+      return;
+    }
+    if (this.lotOeuf.quantite > this.selectedOeufQuantite) {
+      this.errorMessage = `La quantité à éclore (${this.lotOeuf.quantite}) dépasse la quantité disponible (${this.selectedOeufQuantite})`;
+      return;
     }
 
-    /**
-     * Charge tous les lots (un lot sans vivants peut encore avoir des oeufs à éclore)
-     */
-    loadLots(): void {
-        this.lotService.getAll().subscribe({
-            next: (data) => {
-                this.lots = data;
-            },
-            error: (err) => {
-                console.error('Erreur chargement lots', err);
-                this.errorMessage = 'Impossible de charger les lots';
-            }
-        });
+    const reste = this.selectedOeufQuantite - this.lotOeuf.quantite;
+    if (reste > 0) {
+      this.resteQuantite = reste;
+      this.showRestePopup = true;
+    } else {
+      this.submitEclosion('aucun', 0);
     }
+  }
 
-    // Appelé quand l'utilisateur change de lot dans le select
-    onLotChange(): void {
-        // Réinitialiser la sélection d'oeuf
-        this.lotOeuf.idOeuf = 0;
-        this.oeufs = [];
+  onResteChoice(action: 'vendre' | 'jeter'): void {
+    this.showRestePopup = false;
+    this.submitEclosion(action, this.resteQuantite);
+  }
 
-        if (!this.selectedLotId || this.selectedLotId === 0) {
-            return;
-        }
+  private submitEclosion(resteAction: string, resteQuantite: number): void {
+    const payload = { ...this.lotOeuf, resteAction, resteQuantite };
 
-        // Charger les oeufs du lot sélectionné AVEC quantité restante
-        this.oeufService.findByLotIdWithRemaining(this.selectedLotId).subscribe({
-            next: (data) => {
-                this.oeufs = data;
-                if (data.length === 0) {
-                    this.errorMessage = 'Aucune portée d\'oeufs restante pour ce lot';
-                } else {
-                    this.errorMessage = '';
-                }
-            },
-            error: (err) => {
-                console.error('Erreur chargement oeufs du lot', err);
-                this.errorMessage = 'Impossible de charger les oeufs de ce lot';
-            }
-        });
-    }
-
-     onSubmit(): void {
-        this.lotOeufService.create(this.lotOeuf).subscribe({
-            next: () => {
-                this.successMessage = 'Oeufs éclos enregistrés comme éclos avec succès';
-                this.errorMessage = '';
-                // Réinitialiser le formulaire
-                this.lotOeuf = {
-                    idOeuf: 0,
-                    date_enregistrement: '',
-                    quantite: 0
-                };
-                // Recharger les portées restantes du lot sélectionné
-                if (this.selectedLotId && this.selectedLotId !== 0) {
-                    this.onLotChange();
-                }
-            },
-            error: (err) => {
-                console.error('Erreur enregistrement oeuf éclos', err);
-                this.errorMessage = 'Impossible d\'enregistrer les oeufs comme éclos';
-                this.successMessage = '';
-            }
-        });
-    }
+    this.lotOeufService.create(payload).subscribe({
+      next: (res) => {
+        let msg = `✓ ${this.lotOeuf.quantite} poussins éclos → nouveau lot créé`;
+        if (res.nouveauLot?.id) msg = `✓ ${this.lotOeuf.quantite} poussins éclos → nouveau lot #${res.nouveauLot.id}`;
+        if (resteAction === 'vendre') msg += ` · ${resteQuantite} œufs restants gardés pour la vente`;
+        else if (resteAction === 'jeter') msg += ` · ${resteQuantite} œufs restants retirés (déchets)`;
+        this.successMessage = msg;
+        this.errorMessage = '';
+        this.lotOeuf = { idOeuf: 0, date_enregistrement: '', quantite: 0 };
+        this.selectedOeufQuantite = 0;
+        this.onLotChange();
+      },
+      error: () => {
+        this.errorMessage = 'Impossible d\'enregistrer l\'éclosion';
+        this.successMessage = '';
+      }
+    });
+  }
 }

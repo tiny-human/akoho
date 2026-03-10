@@ -1,57 +1,80 @@
-<div class="container">
-    <h2>Eclore des oeufs</h2>
+<div class="page-container">
 
-    <!-- Message de succès -->
+  <nav class="nav-bar">
+    <a routerLink="/dashboard" class="nav-link">Dashboard</a>
+    <a routerLink="/ajouter-lot" class="nav-link">Ajouter lot</a>
+    <a routerLink="/resenser-oeuf" class="nav-link">Recenser œufs</a>
+    <a routerLink="/oeuf-eclot" class="nav-link active">Éclosion</a>
+    <a routerLink="/ajouter-mort" class="nav-link">Morts</a>
+  </nav>
+
+  <div class="form-card">
+    <h2>Éclore des œufs</h2>
+
     @if (successMessage) {
-    <div class="alert success">{{ successMessage }}</div>
+      <div class="alert success">{{ successMessage }}</div>
     }
-
-    <!-- Meslistsage d'erreur -->
     @if (errorMessage) {
-    <div class="alert error">{{ errorMessage }}</div>
+      <div class="alert error">{{ errorMessage }}</div>
     }
 
     <form (ngSubmit)="onSubmit()">
 
-        <!-- Sélection du lot -->
-        <div class="form-group">
-            <label for="lot">Lot</label>
-            <select id="lot" [(ngModel)]="selectedLotId" name="selectedLotId" (ngModelChange)="onLotChange()" required>
-                <option [value]="0" disabled>-- Choisir un lot --</option>
-                @for (lot of lots; track lot.id) {
-                <option [value]="lot.id">Lot #{{ lot.id }}</option>
-                }
-            </select>
-        </div>
+      <div class="form-group">
+        <label for="lot">Lot</label>
+        <select id="lot" [(ngModel)]="selectedLotId" name="selectedLotId" (ngModelChange)="onLotChange()" required>
+          <option [value]="0" disabled>-- Choisir un lot --</option>
+          @for (lot of lots; track lot.id) {
+            <option [value]="lot.id">Lot #{{ lot.id }}</option>
+          }
+        </select>
+      </div>
 
-        <!-- Sélection de la portée d'oeufs (filtré par lot) -->
-        <div class="form-group">
-            <label for="oeuf">Portée d'oeufs</label>
-            <select id="oeuf" [(ngModel)]="lotOeuf.idOeuf" name="idOeuf" required [disabled]="oeufs.length === 0">
-                <option [value]="0" disabled>-- Choisir une portée --</option>
-                @for (oeuf of oeufs; track oeuf.id) {
-                <option [value]="oeuf.id">{{ oeuf.quantite }} oeufs restants - {{ oeuf.date_ponte }}</option>
-                }
-            </select>
-        </div>
+      <div class="form-group">
+        <label for="oeuf">Portée d'œufs (restants)</label>
+        <select id="oeuf" [(ngModel)]="lotOeuf.idOeuf" name="idOeuf" required [disabled]="oeufs.length === 0" (ngModelChange)="onOeufChange()">
+          <option [value]="0" disabled>-- Choisir une portée --</option>
+          @for (oeuf of oeufs; track oeuf.id) {
+            <option [value]="oeuf.id">{{ oeuf.quantite }} œufs restants — {{ oeuf.date_ponte }}</option>
+          }
+        </select>
+      </div>
 
-        <!-- Date d'éclosion -->
-        <div class="form-group">
-            <label for="date">Date d'éclosion</label>
-            <input type="date" id="date" [(ngModel)]="lotOeuf.date_enregistrement" name="date_enregistrement" required>
-        </div>
+      @if (selectedOeufQuantite > 0) {
+        <div class="info-bar">Disponible : <strong>{{ selectedOeufQuantite }}</strong> œufs</div>
+      }
 
-        <!-- Quantité éclose -->
-        <div class="form-group">
-            <label for="quantite">Quantité éclose</label>
-            <input type="number" id="quantite" [(ngModel)]="lotOeuf.quantite" name="quantite" placeholder="Ex: 80"
-                required min="0">
-        </div>
+      <div class="form-group">
+        <label for="date">Date d'éclosion</label>
+        <input type="date" id="date" [(ngModel)]="lotOeuf.date_enregistrement" name="date_enregistrement" required>
+      </div>
 
-        <!-- Bouton soumettre -->
-        <button type="submit">Eclore</button>
-        <button><a routerLink="/ajouter-lot">Ajouter un lot</a></button>
-        <button><a routerLink="/resenser-oeuf">Resenser les oeufs</a></button>
-        <button><a routerLink="/ajouter-mort">Ajouter des morts</a></button>
+      <div class="form-group">
+        <label for="quantite">Quantité éclose</label>
+        <input type="number" id="quantite" [(ngModel)]="lotOeuf.quantite" name="quantite"
+               placeholder="Ex: 80" required min="1" [max]="selectedOeufQuantite">
+      </div>
+
+      <button type="submit" class="btn-primary">Éclore</button>
     </form>
+  </div>
+
+  <!-- Popup reste non-éclos -->
+  @if (showRestePopup) {
+    <div class="overlay" (click)="showRestePopup = false">
+      <div class="popup" (click)="$event.stopPropagation()">
+        <h3>Œufs non éclos</h3>
+        <p>Il reste <strong>{{ resteQuantite }}</strong> œuf(s) non éclos.</p>
+        <p>Que voulez-vous en faire ?</p>
+        <div class="popup-actions">
+          <button class="btn-vendre" (click)="onResteChoice('vendre')">
+            Garder pour vente
+          </button>
+          <button class="btn-jeter" (click)="onResteChoice('jeter')">
+            Jeter (déchet)
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>

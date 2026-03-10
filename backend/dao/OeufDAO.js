@@ -90,10 +90,8 @@ class OeufDAO {
     }
   }
 
-  /**
-   * Oeufs d'un lot avec quantité restante (originale - éclos)
-   * Ne retourne que ceux ayant encore des oeufs (restant > 0)
-   */
+//    Ne retourne que ceux ayant encore des oeufs (restant > 0)
+  
   static async findByLotIdWithRemaining(idLot) {
     try {
       const pool = await poolPromise;
@@ -117,9 +115,7 @@ class OeufDAO {
     }
   }
 
-  /**
-   * Retourne les IDs des lots qui ont encore des oeufs non éclos
-   */
+
   static async findLotsWithRemainingOeufs() {
     try {
       const pool = await poolPromise;
@@ -136,10 +132,6 @@ class OeufDAO {
     }
   }
 
-  /**
-   * Total oeufs par lot (≤ dateFin), groupé par idLot
-   * @returns {Object} { idLot: totalOeufs, ... }
-   */
   static async sumGroupedByLot(dateFin) {
     try {
       const pool = await poolPromise;

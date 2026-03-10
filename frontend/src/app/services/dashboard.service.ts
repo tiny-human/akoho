@@ -10,10 +10,7 @@ export class DashboardService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Récupère le dashboard.
-   * @param dateFin  Date ISO (ex. '2026-03-09') — null = aujourd'hui
-   */
+ 
   getDashboard(dateFin?: string): Observable<DashboardRow[]> {
     let params = new HttpParams();
     if (dateFin) {
