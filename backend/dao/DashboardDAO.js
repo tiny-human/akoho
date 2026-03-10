@@ -46,6 +46,10 @@ class DashboardDAO {
       const dateEnreg = new Date(lot.date_enregistrement);
       if (dateEnreg > filterDate) continue;      // lot pas encore créé à cette date
 
+      // Ignorer les lots sans poulets vivants
+      const mortTotal = mortsByLot[lot.id] || 0;
+      if (lot.quantite - mortTotal <= 0) continue;
+
       const raceId    = lot.idRace;
       const confPoids = confPoidsMap[raceId] || {};
       const confPrix  = confPrixMap[raceId]  || { PU_sakafo: 0, PV: 0, PV_oeuf: 0 };

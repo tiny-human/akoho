@@ -39,16 +39,16 @@
             <th>Lot</th>
             <th>Race</th>
             <th>Têtes</th>
-            <th>Vivants</th>
-            <th>Sem.</th>
-            <th>PA (Ar)</th>
+            <!-- <th>Vivants</th> -->
+            <!-- <th>Sem.</th> -->
+            <th>prix d'achat (Ar)</th>
             <th>Sakafo (Ar)</th>
             <th>Morts</th>
-            <th>PMU (kg)</th>
-            <th>PML (kg)</th>
+            <th>poids moyen unitaire (kg)</th>
+            <th>poids moyen du lot (kg)</th>
             <th>PV poulets (Ar)</th>
             <th>Œufs</th>
-            <th>Éclos</th>
+            <!-- <th>Éclos</th> -->
             <th>PV œufs (Ar)</th>
             <th>Bénéfice (Ar)</th>
           </tr>
@@ -58,9 +58,9 @@
             <tr>
               <td class="center">#{{ r.idLot }}</td>
               <td>{{ r.raceName }}</td>
-              <td class="right">{{ r.quantite }}</td>
               <td class="right">{{ r.quantiteVivante }}</td>
-              <td class="center">S{{ r.semaineActuelle }}</td>
+              <!-- <td class="right">{{ r.quantiteVivante }}</td>
+              <td class="center">S{{ r.semaineActuelle }}</td> -->
               <td class="right">{{ fmt(r.PA) }}</td>
               <td class="right">{{ fmt(r.sakafo) }}</td>
               <td class="center">{{ r.mort }}</td>
@@ -68,7 +68,7 @@
               <td class="right">{{ fmt(r.PML) }}</td>
               <td class="right">{{ fmt(r.PV) }}</td>
               <td class="center">{{ r.quantite_oeuf }}</td>
-              <td class="center">{{ r.oeufs_eclos }}</td>
+              <!-- <td class="center">{{ r.oeufs_eclos }}</td> -->
               <td class="right">{{ fmt(r.PV_oeuf) }}</td>
               <td class="right" [class]="benefClass(r.benef)">
                 {{ fmt(r.benef) }}
@@ -76,7 +76,7 @@
             </tr>
           }
         </tbody>
-        <tfoot>
+        <!-- <tfoot>
           <tr class="totals">
             <td colspan="5"><strong>TOTAUX</strong></td>
             <td class="right"><strong>{{ fmt(totalPA) }}</strong></td>
@@ -92,7 +92,7 @@
               <strong>{{ fmt(totalBenef) }}</strong>
             </td>
           </tr>
-        </tfoot>
+        </tfoot> -->
       </table>
     </div>
   }

@@ -81,6 +81,34 @@ class OeufController {
             res.status(500).json({ error: 'Erreur lors de la récupération des oeufs par id lot' });
         }
     }
+
+    /**
+     * Oeufs d'un lot avec quantité restante (après éclosions)
+     * Seuls ceux ayant encore des oeufs sont retournés
+     */
+    static async findByLotIdWithRemaining(req, res) {
+        try {
+            const idLot = parseInt(req.params.idLot);
+            const items = await OeufDAO.findByLotIdWithRemaining(idLot);
+            res.json(items.map(modelToPlain));
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Erreur lors de la récupération des oeufs restants par lot' });
+        }
+    }
+
+    /**
+     * Retourne les IDs des lots qui ont encore des oeufs non éclos
+     */
+    static async findLotsWithRemainingOeufs(req, res) {
+        try {
+            const lotIds = await OeufDAO.findLotsWithRemainingOeufs();
+            res.json(lotIds);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Erreur lors de la récupération des lots avec oeufs restants' });
+        }
+    }
 }
 
 module.exports = OeufController;

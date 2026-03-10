@@ -16,7 +16,6 @@ CREATE TABLE lot(
     prix_achat DECIMAL(10,2) NOT NULL,
     CONSTRAINT FK_lot_race FOREIGN KEY (idRace) REFERENCES race(id)
 );
-GO
 
 CREATE TABLE conf_prix(
     id INT IDENTITY(1,1) PRIMARY KEY,
@@ -26,7 +25,6 @@ CREATE TABLE conf_prix(
     PV_oeuf DECIMAL(10,2) NOT NULL,
     CONSTRAINT FK_conf_prix_race FOREIGN KEY (idRace) REFERENCES race(id)
 );
-GO
 
 CREATE TABLE oeuf(
     id INT IDENTITY(1,1) PRIMARY KEY,
@@ -35,7 +33,6 @@ CREATE TABLE oeuf(
     date_enregistrement DATE NOT NULL,
     CONSTRAINT FK_oeuf_lot FOREIGN KEY (idLot) REFERENCES lot(id)
 );
-GO
 
 CREATE TABLE conf_poids(
     id INT IDENTITY(1,1) PRIMARY KEY,
@@ -45,9 +42,6 @@ CREATE TABLE conf_poids(
     sakafo DECIMAL(10,2) NOT NULL,
     CONSTRAINT FK_conf_poids_race FOREIGN KEY (idRace) REFERENCES race(id)
 );
-GO
-
-
 
 CREATE TABLE lot_oeuf(
     id INT IDENTITY(1,1) PRIMARY KEY,
@@ -56,7 +50,6 @@ CREATE TABLE lot_oeuf(
     quantite INT NOT NULL,
     CONSTRAINT FK_lot_oeuf_oeuf FOREIGN KEY (idOeuf) REFERENCES oeuf(id)
 );
-GO
 
 CREATE TABLE mort(
     id INT IDENTITY(1,1) PRIMARY KEY,
@@ -65,4 +58,3 @@ CREATE TABLE mort(
     date_enregistrement DATE NOT NULL,
     CONSTRAINT FK_mort_lot FOREIGN KEY (idLot) REFERENCES lot(id)
 );
-GO

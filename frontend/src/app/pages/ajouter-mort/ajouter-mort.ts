@@ -41,9 +41,9 @@ export class AjouterMortComponent implements OnInit {
     this.loadLots();
   }
 
-  // Charger la liste des lots depuis le backend
+  // Charger uniquement les lots ayant encore des poulets vivants
   loadLots(): void {
-    this.lotService.getAll().subscribe({
+    this.lotService.getAllAlive().subscribe({
       next: (data) => {
         this.lots = data;
       },
@@ -66,10 +66,17 @@ export class AjouterMortComponent implements OnInit {
           quantite: 0,
           date_enregistrement: ''
         };
+        // Recharger les lots (enlever ceux qui n'ont plus de vivants)
+        this.loadLots();
       },
       error: (err) => {
         console.error('Erreur enregistrement mort', err);
-        this.errorMessage = 'Impossible d\'enregistrer les morts';
+        // Afficher le message d'erreur du backend (ex: quantité trop élevée)
+        if (err.error && err.error.error) {
+          this.errorMessage = err.error.error;
+        } else {
+          this.errorMessage = 'Impossible d\'enregistrer les morts';
+        }
         this.successMessage = '';
       }
     });

@@ -37,7 +37,7 @@ export class ResenserOeufComponent implements OnInit {
     }
 
     loadLots(): void {
-        this.lotService.getAll().subscribe({
+        this.lotService.getAllAlive().subscribe({
             next: (data) => {
                 this.lots = data;
             },

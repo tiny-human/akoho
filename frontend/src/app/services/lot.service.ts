@@ -49,4 +49,11 @@ export class LotService {
   getMortByLotId(id: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/${id}/mort`);
   }
+
+  /**
+   * Lots ayant encore des poulets vivants
+   */
+  getAllAlive(): Observable<Lot[]> {
+    return this.http.get<Lot[]>(`${this.apiUrl}/alive`);
+  }
 }

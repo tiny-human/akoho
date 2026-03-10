@@ -24,8 +24,9 @@ export class OeufEclotComponent implements OnInit {
     // Lot sélectionné (pour le select cascade)
     selectedLotId: number = 0;
 
-    // Oeufs filtrés par lot sélectionné
+    // Oeufs filtrés par lot sélectionné (avec quantité restante)
     oeufs: Oeuf[] = [];
+    // Tous les lots
     lots: Lot[] = [];
 
     successMessage = '';
@@ -39,10 +40,11 @@ export class OeufEclotComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadLots();
-        // On ne charge PAS tous les oeufs au démarrage,
-        // on attend que l'utilisateur choisisse un lot
     }
 
+    /**
+     * Charge tous les lots (un lot sans vivants peut encore avoir des oeufs à éclore)
+     */
     loadLots(): void {
         this.lotService.getAll().subscribe({
             next: (data) => {
@@ -65,12 +67,12 @@ export class OeufEclotComponent implements OnInit {
             return;
         }
 
-        // Charger les oeufs du lot sélectionné
-        this.oeufService.findByLotId(this.selectedLotId).subscribe({
+        // Charger les oeufs du lot sélectionné AVEC quantité restante
+        this.oeufService.findByLotIdWithRemaining(this.selectedLotId).subscribe({
             next: (data) => {
                 this.oeufs = data;
                 if (data.length === 0) {
-                    this.errorMessage = 'Aucune portée d\'oeufs pour ce lot';
+                    this.errorMessage = 'Aucune portée d\'oeufs restante pour ce lot';
                 } else {
                     this.errorMessage = '';
                 }
@@ -93,6 +95,10 @@ export class OeufEclotComponent implements OnInit {
                     date_enregistrement: '',
                     quantite: 0
                 };
+                // Recharger les portées restantes du lot sélectionné
+                if (this.selectedLotId && this.selectedLotId !== 0) {
+                    this.onLotChange();
+                }
             },
             error: (err) => {
                 console.error('Erreur enregistrement oeuf éclos', err);

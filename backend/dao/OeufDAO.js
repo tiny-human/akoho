@@ -91,6 +91,52 @@ class OeufDAO {
   }
 
   /**
+   * Oeufs d'un lot avec quantité restante (originale - éclos)
+   * Ne retourne que ceux ayant encore des oeufs (restant > 0)
+   */
+  static async findByLotIdWithRemaining(idLot) {
+    try {
+      const pool = await poolPromise;
+      const result = await pool.request()
+        .input('idLot', sql.Int, idLot)
+        .query(`
+          SELECT o.id, o.idLot, o.date_enregistrement,
+                 o.quantite - ISNULL((SELECT SUM(lo.quantite) FROM lot_oeuf lo WHERE lo.idOeuf = o.id), 0) AS quantite_restante
+          FROM oeuf o
+          WHERE o.idLot = @idLot
+            AND o.quantite - ISNULL((SELECT SUM(lo.quantite) FROM lot_oeuf lo WHERE lo.idOeuf = o.id), 0) > 0
+        `);
+      return result.recordset.map(row => {
+        const o = new Oeuf(row.idLot, row.date_enregistrement, row.quantite_restante);
+        o.setId(row.id);
+        return o;
+      });
+    } catch (err) {
+      console.error('Erreur récupération oeufs restants par lot:', err);
+      throw err;
+    }
+  }
+
+  /**
+   * Retourne les IDs des lots qui ont encore des oeufs non éclos
+   */
+  static async findLotsWithRemainingOeufs() {
+    try {
+      const pool = await poolPromise;
+      const result = await pool.request()
+        .query(`
+          SELECT DISTINCT o.idLot
+          FROM oeuf o
+          WHERE o.quantite - ISNULL((SELECT SUM(lo.quantite) FROM lot_oeuf lo WHERE lo.idOeuf = o.id), 0) > 0
+        `);
+      return result.recordset.map(row => row.idLot);
+    } catch (err) {
+      console.error('Erreur récupération lots avec oeufs restants:', err);
+      throw err;
+    }
+  }
+
+  /**
    * Total oeufs par lot (≤ dateFin), groupé par idLot
    * @returns {Object} { idLot: totalOeufs, ... }
    */

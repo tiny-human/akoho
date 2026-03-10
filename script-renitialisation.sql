@@ -1,0 +1,16 @@
+DELETE FROM lot_oeuf;
+DELETE FROM oeuf;
+DELETE FROM mort;
+DELETE FROM lot;
+DELETE FROM conf_prix;
+DELETE FROM conf_poids;
+DELETE FROM race;
+
+-- Remettre les IDENTITY à 1
+DBCC CHECKIDENT ('lot_oeuf', RESEED, 0);
+DBCC CHECKIDENT ('oeuf', RESEED, 0);
+DBCC CHECKIDENT ('mort', RESEED, 0);
+DBCC CHECKIDENT ('lot', RESEED, 0);
+DBCC CHECKIDENT ('conf_prix', RESEED, 0);
+DBCC CHECKIDENT ('conf_poids', RESEED, 0);
+DBCC CHECKIDENT ('race', RESEED, 0);

@@ -17,6 +17,7 @@ router.post('/races', RaceController.create);
 
 // ── Lots ─────────────────────────────────────────────────
 router.get('/lots', LotController.list);
+router.get('/lots/alive', LotController.listAlive);
 router.get('/lots/:id', LotController.get);
 router.post('/lots', LotController.create);
 router.put('/lots/:id', LotController.update);
@@ -24,6 +25,8 @@ router.delete('/lots/:id', LotController.delete);
 
 // ── Oeufs ────────────────────────────────────────────────
 router.get('/oeufs', OeufController.list);
+router.get('/oeufs/lots-with-remaining', OeufController.findLotsWithRemainingOeufs);
+router.get('/oeufs/lot/:idLot/remaining', OeufController.findByLotIdWithRemaining);
 router.get('/oeufs/lot/:idLot', OeufController.findByLotId);
 router.get('/oeufs/:id', OeufController.get);
 router.post('/oeufs', OeufController.create);

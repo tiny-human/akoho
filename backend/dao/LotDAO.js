@@ -96,6 +96,51 @@ class LotDAO {
       throw err;
     }
   }
+
+  /**
+   * Retourne le nombre de poulets vivants dans un lot
+   * vivants = quantite_initiale - total_morts
+   */
+  static async getRemainingAlive(idLot) {
+    try {
+      const pool = await poolPromise;
+      const result = await pool.request()
+        .input('idLot', sql.Int, idLot)
+        .query(`
+          SELECT l.quantite - ISNULL((SELECT SUM(m.quantite) FROM mort m WHERE m.idLot = l.id), 0) AS vivants
+          FROM lot l
+          WHERE l.id = @idLot
+        `);
+      if (result.recordset.length === 0) return 0;
+      return result.recordset[0].vivants;
+    } catch (err) {
+      console.error('Erreur calcul vivants lot:', err);
+      throw err;
+    }
+  }
+
+  /**
+   * Retourne tous les lots qui ont encore des poulets vivants (quantite - morts > 0)
+   */
+  static async findAllAlive() {
+    try {
+      const pool = await poolPromise;
+      const result = await pool.request()
+        .query(`
+          SELECT l.*
+          FROM lot l
+          WHERE l.quantite - ISNULL((SELECT SUM(m.quantite) FROM mort m WHERE m.idLot = l.id), 0) > 0
+        `);
+      return result.recordset.map(row => {
+        const l = new Lot(row.idRace, row.quantite, row.date_enregistrement, row.age, row.prix_achat);
+        l.setId(row.id);
+        return l;
+      });
+    } catch (err) {
+      console.error('Erreur récupération lots vivants:', err);
+      throw err;
+    }
+  }
 }
 
 module.exports = LotDAO;

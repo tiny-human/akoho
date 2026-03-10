@@ -32,4 +32,19 @@ export class OeufService {
   findByLotId(idLot: number): Observable<Oeuf[]> {
     return this.http.get<Oeuf[]>(`${this.apiUrl}/lot/${idLot}`);
   }
+
+  /**
+   * Oeufs d'un lot avec quantité restante (après éclosions)
+   * Seuls ceux ayant encore des oeufs sont retournés
+   */
+  findByLotIdWithRemaining(idLot: number): Observable<Oeuf[]> {
+    return this.http.get<Oeuf[]>(`${this.apiUrl}/lot/${idLot}/remaining`);
+  }
+
+  /**
+   * Retourne les IDs des lots qui ont encore des oeufs non éclos
+   */
+  findLotsWithRemainingOeufs(): Observable<number[]> {
+    return this.http.get<number[]>(`${this.apiUrl}/lots-with-remaining`);
+  }
 }

@@ -73,5 +73,18 @@ class LotController {
         }
     }
 
+    /**
+     * GET /api/lots/alive — lots ayant encore des poulets vivants
+     */
+    static async listAlive(req, res) {
+        try {
+            const lots = await LotDAO.findAllAlive();
+            res.json(lots.map(modelToPlain));
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Erreur lors de la récupération des lots vivants' });
+        }
+    }
+
 }
 module.exports = LotController;

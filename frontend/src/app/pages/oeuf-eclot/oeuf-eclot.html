@@ -30,7 +30,7 @@
             <select id="oeuf" [(ngModel)]="lotOeuf.idOeuf" name="idOeuf" required [disabled]="oeufs.length === 0">
                 <option [value]="0" disabled>-- Choisir une portée --</option>
                 @for (oeuf of oeufs; track oeuf.id) {
-                <option [value]="oeuf.id">{{ oeuf.quantite }} oeufs - {{ oeuf.date_ponte }}</option>
+                <option [value]="oeuf.id">{{ oeuf.quantite }} oeufs restants - {{ oeuf.date_ponte }}</option>
                 }
             </select>
         </div>

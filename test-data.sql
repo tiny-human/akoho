@@ -113,7 +113,7 @@ GO
 -- poids = poids moyen en kg à cette semaine
 -- sakafo = consommation de nourriture en kg pour la semaine entière
 -- Race 1 : Akoho Gasy (petits poulets locaux, croissance lente)
-INSERT INTO conf_poids (idRace, semaine, poids, sakafo) VALUES (1, 0, 0.04, 0.05);
+INSERT INTO conf_poids (idRace, semaine, poids, sakafo) VALUES (1, 0,  0.05, 0);
 INSERT INTO conf_poids (idRace, semaine, poids, sakafo) VALUES (1, 1, 0.08, 0.10);
 INSERT INTO conf_poids (idRace, semaine, poids, sakafo) VALUES (1, 2, 0.15, 0.18);
 INSERT INTO conf_poids (idRace, semaine, poids, sakafo) VALUES (1, 3, 0.25, 0.28);
@@ -128,7 +128,7 @@ INSERT INTO conf_poids (idRace, semaine, poids, sakafo) VALUES (1, 11, 1.42, 1.2
 INSERT INTO conf_poids (idRace, semaine, poids, sakafo) VALUES (1, 12, 1.50, 1.30);
 
 -- Race 2 : Brahma (gros poulets, croissance rapide)
-INSERT INTO conf_poids (idRace, semaine, poids, sakafo) VALUES (2, 0, 0.05, 0.06);
+INSERT INTO conf_poids (idRace, semaine, poids, sakafo) VALUES (2, 0,  0.05, 0);
 INSERT INTO conf_poids (idRace, semaine, poids, sakafo) VALUES (2, 1, 0.12, 0.15);
 INSERT INTO conf_poids (idRace, semaine, poids, sakafo) VALUES (2, 2, 0.25, 0.30);
 INSERT INTO conf_poids (idRace, semaine, poids, sakafo) VALUES (2, 3, 0.45, 0.50);
@@ -143,7 +143,7 @@ INSERT INTO conf_poids (idRace, semaine, poids, sakafo) VALUES (2, 11, 3.20, 2.9
 INSERT INTO conf_poids (idRace, semaine, poids, sakafo) VALUES (2, 12, 3.50, 3.00);
 
 -- Race 3 : Rhode Island (taille moyenne, bonne pondeuse)
-INSERT INTO conf_poids (idRace, semaine, poids, sakafo) VALUES (3, 0, 0.04, 0.05);
+INSERT INTO conf_poids (idRace, semaine, poids, sakafo) VALUES (3, 0,  0.05, 0);
 INSERT INTO conf_poids (idRace, semaine, poids, sakafo) VALUES (3, 1, 0.10, 0.12);
 INSERT INTO conf_poids (idRace, semaine, poids, sakafo) VALUES (3, 2, 0.20, 0.24);
 INSERT INTO conf_poids (idRace, semaine, poids, sakafo) VALUES (3, 3, 0.35, 0.38);

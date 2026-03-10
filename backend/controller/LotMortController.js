@@ -1,5 +1,6 @@
 const LotMortDAO = require('../dao/LotMortDAO');
 const LotMortClass = require('../model/LotMort');
+const LotDAO = require('../dao/LotDAO');
 
 function modelToPlain(lm) {
   if (!lm) return null;
@@ -37,6 +38,15 @@ class LotMortController {
   static async create(req, res) {
     try {
       const { idLot, date_enregistrement, quantite } = req.body;
+
+      // Vérifier que la quantité ne dépasse pas les poulets vivants
+      const vivants = await LotDAO.getRemainingAlive(idLot);
+      if (quantite > vivants) {
+        return res.status(400).json({
+          error: `Quantité trop élevée : il ne reste que ${vivants} poulet(s) vivant(s) dans ce lot`
+        });
+      }
+
       const lm = new LotMortClass(idLot, quantite, date_enregistrement);
       const result = await LotMortDAO.create(lm);
       res.status(201).json({ ok: true, result });

@@ -12,7 +12,7 @@
             <select id="lot" [(ngModel)]="lotMort.idLot" name="idLot" required>
                 <option [value]="0" disabled>-- Choisir un lot --</option>
                 @for (lot of lots; track lot.id) {
-                <option [value]="lot.id">Lot #{{ lot.id }} - {{ lot.quantite }} têtes ({{ lot.date_enregistrement }})
+                <option [value]="lot.id">Lot #{{ lot.id }} 
                 </option>
                 }
             </select>
