@@ -99,10 +99,15 @@ class OeufDAO {
         .input('idLot', sql.Int, idLot)
         .query(`
           SELECT o.id, o.idLot, o.date_enregistrement,
-                 o.quantite - ISNULL((SELECT SUM(lo.quantite) FROM lot_oeuf lo WHERE lo.idOeuf = o.id), 0) AS quantite_restante
+                 o.quantite
+                   - ISNULL((SELECT SUM(lo.quantite) FROM lot_oeuf lo WHERE lo.idOeuf = o.id), 0)
+                   - ISNULL((SELECT SUM(od.quantite) FROM oeuf_dechet od WHERE od.idOeuf = o.id), 0)
+                   AS quantite_restante
           FROM oeuf o
           WHERE o.idLot = @idLot
-            AND o.quantite - ISNULL((SELECT SUM(lo.quantite) FROM lot_oeuf lo WHERE lo.idOeuf = o.id), 0) > 0
+            AND o.quantite
+                  - ISNULL((SELECT SUM(lo.quantite) FROM lot_oeuf lo WHERE lo.idOeuf = o.id), 0)
+                  - ISNULL((SELECT SUM(od.quantite) FROM oeuf_dechet od WHERE od.idOeuf = o.id), 0) > 0
         `);
       return result.recordset.map(row => {
         const o = new Oeuf(row.idLot, row.date_enregistrement, row.quantite_restante);
@@ -123,7 +128,9 @@ class OeufDAO {
         .query(`
           SELECT DISTINCT o.idLot
           FROM oeuf o
-          WHERE o.quantite - ISNULL((SELECT SUM(lo.quantite) FROM lot_oeuf lo WHERE lo.idOeuf = o.id), 0) > 0
+          WHERE o.quantite
+                  - ISNULL((SELECT SUM(lo.quantite) FROM lot_oeuf lo WHERE lo.idOeuf = o.id), 0)
+                  - ISNULL((SELECT SUM(od.quantite) FROM oeuf_dechet od WHERE od.idOeuf = o.id), 0) > 0
         `);
       return result.recordset.map(row => row.idLot);
     } catch (err) {
