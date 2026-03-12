@@ -2,10 +2,6 @@ const DashboardDAO = require('../dao/DashboardDAO');
 
 class DashboardController {
 
-  /**
-   * GET /api/dashboard?dateFin=2026-03-09
-   * Si dateFin est absent → utilise la date du jour
-   */
   static async getDashboard(req, res) {
     try {
       const { dateFin } = req.query;

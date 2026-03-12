@@ -1,6 +1,6 @@
 <div class="dashboard-container">
 
-  <!-- ── Navigation rapide ───────────────────────────────── -->
+  <!-- Navigation rapide -->
   <nav class="nav-bar">
     <a routerLink="/dashboard" class="nav-link active"> Dashboard</a>
     <a routerLink="/ajouter-lot" class="nav-link"> Ajouter lot</a>
@@ -9,9 +9,9 @@
     <a routerLink="/ajouter-mort" class="nav-link"> Morts</a>
   </nav>
 
-  <h2> Dashboard — Suivi des lots</h2>
+  <h2> Dashboard — Suivi des lots ETU004069</h2>
 
-  <!-- ── Filtre par date ─────────────────────────────────── -->
+  <!--Filtre par date -->
   <div class="filter-bar">
     <label for="dateFin">État des lots au :</label>
     <input
@@ -22,7 +22,7 @@
     />
   </div>
 
-  <!-- ── Loading / Erreur ────────────────────────────────── -->
+  <!--Loading / Erreur-->
   @if (loading) {
     <div class="loading">Chargement…</div>
   }
@@ -30,7 +30,7 @@
     <div class="error">{{ error }}</div>
   }
 
-  <!-- ── Tableau ─────────────────────────────────────────── -->
+  <!--Tableau-->
   @if (!loading && rows.length > 0) {
     <div class="table-wrapper">
       <table>
@@ -44,8 +44,8 @@
             <th>prix d'achat (Ar)</th>
             <th>Sakafo (Ar)</th>
             <th>Morts</th>
-            <th>poids moyen unitaire (kg)</th>
-            <th>poids moyen du lot (kg)</th>
+            <th>poids moyen unitaire (g)</th>
+            <th>poids moyen du lot (g)</th>
             <th>PV poulets (Ar)</th>
             <th>Œufs</th>
             <!-- <th>Éclos</th> -->
@@ -97,7 +97,7 @@
     </div>
   }
 
-  <!-- ── Aucune donnée ───────────────────────────────────── -->
+  <!--Aucune donnée-->
   @if (!loading && rows.length === 0 && !error) {
     <div class="empty">
       Aucun lot enregistré pour cette date.

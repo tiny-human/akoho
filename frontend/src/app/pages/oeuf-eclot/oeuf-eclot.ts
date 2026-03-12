@@ -92,8 +92,8 @@ export class OeufEclotComponent implements OnInit {
 
     this.lotOeufService.create(payload).subscribe({
       next: (res) => {
-        let msg = `✓ ${this.lotOeuf.quantite} poussins éclos → nouveau lot créé`;
-        if (res.nouveauLot?.id) msg = `✓ ${this.lotOeuf.quantite} poussins éclos → nouveau lot #${res.nouveauLot.id}`;
+        let msg = `${this.lotOeuf.quantite} poussins éclos → nouveau lot créé`;
+        if (res.nouveauLot?.id) msg = `${this.lotOeuf.quantite} poussins éclos → nouveau lot #${res.nouveauLot.id}`;
         if (resteAction === 'vendre') msg += ` · ${resteQuantite} œufs restants gardés pour la vente`;
         else if (resteAction === 'jeter') msg += ` · ${resteQuantite} œufs restants retirés (déchets)`;
         this.successMessage = msg;
