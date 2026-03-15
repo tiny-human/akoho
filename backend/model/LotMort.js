@@ -2,11 +2,15 @@ class LotMort{
     #id;
     #idLot;
     #quantite;
+    #nbFemelles;
+    #nbMales;
     #date_enregistrement;
 
-    constructor(idLot, quantite, date_enregistrement) {
+    constructor(idLot, quantite, date_enregistrement, nbFemelles = null, nbMales = null) {
         this.#idLot = idLot;
         this.#quantite = quantite;
+        this.#nbFemelles = nbFemelles;
+        this.#nbMales = nbMales;
         this.#date_enregistrement = date_enregistrement;
     }
 
@@ -30,6 +34,14 @@ class LotMort{
         return this.#date_enregistrement;
     }
 
+    getNbFemelles() {
+        return this.#nbFemelles;
+    }
+
+    getNbMales() {
+        return this.#nbMales;
+    }
+
     setIdLot(idLot) {
         this.#idLot = idLot;
     }
@@ -40,6 +52,14 @@ class LotMort{
 
     setDateEnregistrement(date_enregistrement) {
         this.#date_enregistrement = date_enregistrement;
+    }
+
+    setNbFemelles(v) {
+        this.#nbFemelles = v;
+    }
+
+    setNbMales(v) {
+        this.#nbMales = v;
     }
 }
 

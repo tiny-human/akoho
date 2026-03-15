@@ -1,7 +1,7 @@
 
 
 -- 3 races
-INSERT INTO race (name) VALUES ('broboneze');      -- id=1
+INSERT INTO race (name) VALUES ('borboneze');      -- id=1
 GO
 
 -- Configuration des prix par race
@@ -52,4 +52,71 @@ UNION ALL SELECT 'lot_oeuf', COUNT(*) FROM lot_oeuf
 UNION ALL SELECT 'mort', COUNT(*) FROM mort;
 GO
 
-SELECT * FROM race;
+IF COL_LENGTH('race', 'jours_incubation') IS NULL
+    ALTER TABLE race ADD jours_incubation INT NULL;
+IF COL_LENGTH('race', 'taux_eclosion') IS NULL
+    ALTER TABLE race ADD taux_eclosion DECIMAL(5,2) NULL;
+IF COL_LENGTH('race', 'taux_femelle') IS NULL
+    ALTER TABLE race ADD taux_femelle DECIMAL(5,2) NULL;
+IF COL_LENGTH('race', 'taux_mort_femelle') IS NULL
+    ALTER TABLE race ADD taux_mort_femelle DECIMAL(5,2) NULL;
+IF COL_LENGTH('race', 'taux_mort_male') IS NULL
+    ALTER TABLE race ADD taux_mort_male DECIMAL(5,2) NULL;
+IF COL_LENGTH('race', 'capacite_ponte') IS NULL
+    ALTER TABLE race ADD capacite_ponte INT NULL;
+GO
+
+IF COL_LENGTH('lot', 'nb_femelles') IS NULL
+    ALTER TABLE lot ADD nb_femelles INT NULL;
+IF COL_LENGTH('lot', 'nb_males') IS NULL
+    ALTER TABLE lot ADD nb_males INT NULL;
+IF COL_LENGTH('lot', 'potentiel_oeufs_total') IS NULL
+    ALTER TABLE lot ADD potentiel_oeufs_total INT NULL;
+IF COL_LENGTH('lot', 'perte_eclosion') IS NULL
+    ALTER TABLE lot ADD perte_eclosion DECIMAL(12,2) NULL;
+GO
+
+IF COL_LENGTH('mort', 'nb_femelles') IS NULL
+    ALTER TABLE mort ADD nb_femelles INT NULL;
+IF COL_LENGTH('mort', 'nb_males') IS NULL
+    ALTER TABLE mort ADD nb_males INT NULL;
+GO
+
+/* 2) UPDATE de ta race existante (id = 1) */
+UPDATE race
+SET
+    name = 'borboneze',
+    jours_incubation = 21,
+    taux_eclosion = 100.00,
+    taux_femelle = 50.00,
+    taux_mort_femelle = 30.00,
+    taux_mort_male = 70.00,
+    capacite_ponte = 5
+WHERE id = 1;
+GO
+
+/* 3) UPDATE de ton lot existant (id = 1)
+   lot actuel: 1 | idRace=1 | quantite=500 | age=0 | 2026-01-01 | 250000.00
+*/
+UPDATE lot
+SET
+    nb_femelles = ROUND(quantite * 0.50, 0),              -- 250
+    nb_males = quantite - ROUND(quantite * 0.50, 0),      -- 250
+    potentiel_oeufs_total = ROUND(quantite * 0.50, 0) * 5,-- 1250 (250 femelles * capacité 5)
+    perte_eclosion = ISNULL(perte_eclosion, 0)            -- parent: pas de perte d'éclosion
+WHERE id = 1;
+GO
+
+/* 4) UPDATE de ton mort existant (id = 1)
+   mort actuel: 1 | idLot=1 | quantite=15 | 2026-02-01
+   répartition selon taux_mort_femelle de la race du lot
+*/
+UPDATE m
+SET
+    nb_femelles = ROUND(m.quantite * ISNULL(r.taux_mort_femelle, 30) / 100.0, 0),
+    nb_males = m.quantite - ROUND(m.quantite * ISNULL(r.taux_mort_femelle, 70) / 100.0, 0)
+FROM mort m
+JOIN lot l  ON l.id = m.idLot
+JOIN race r ON r.id = l.idRace
+WHERE m.id = 1;
+GO

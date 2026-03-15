@@ -12,6 +12,7 @@ export interface DashboardRow {
   PV: number;
   quantite_oeuf: number;
   oeufs_eclos: number;
+  perte_eclosion: number;
   PV_oeuf: number;
   benef: number;
 }

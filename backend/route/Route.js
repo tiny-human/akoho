@@ -14,6 +14,7 @@ const router = express.Router();
 router.get('/races', RaceController.list);
 router.get('/races/:id', RaceController.get);
 router.post('/races', RaceController.create);
+router.put('/races/:id', RaceController.update);
 
 // ── Lots ─────────────────────────────────────────────────
 router.get('/lots', LotController.list);
@@ -37,7 +38,7 @@ router.delete('/oeufs/:id', OeufController.delete);
 router.get('/lot-oeufs', LotOeufController.list);
 router.get('/lot-oeufs/lot/:id', LotOeufController.getOeufsByLotId);
 router.get('/lot-oeufs/:id', LotOeufController.get);
-router.post('/lot-oeufs', LotOeufController.create);
+// La création d'éclosion est désormais automatique lors du recensement d'oeufs
 router.put('/lot-oeufs/:id', LotOeufController.update);
 router.delete('/lot-oeufs/:id', LotOeufController.delete);
 

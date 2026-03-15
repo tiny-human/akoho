@@ -66,3 +66,5 @@ CREATE TABLE oeuf_dechet(
     date_enregistrement DATE NOT NULL,
     CONSTRAINT FK_oeuf_dechet_oeuf FOREIGN KEY (idOeuf) REFERENCES oeuf(id)
 );
+
+ALTER TABLE race;

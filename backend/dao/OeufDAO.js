@@ -155,6 +155,19 @@ class OeufDAO {
       throw err;
     }
   }
+
+  static async getTotalPondusByLot(idLot) {
+    try {
+      const pool = await poolPromise;
+      const result = await pool.request()
+        .input('idLot', sql.Int, idLot)
+        .query('SELECT ISNULL(SUM(quantite), 0) AS total FROM oeuf WHERE idLot = @idLot');
+      return result.recordset[0]?.total || 0;
+    } catch (err) {
+      console.error('Erreur total oeufs pondus par lot:', err);
+      throw err;
+    }
+  }
 }
 
 module.exports = OeufDAO;

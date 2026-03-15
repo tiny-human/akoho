@@ -8,7 +8,9 @@ function modelToPlain(lm) {
     id: lm.getId ? lm.getId() : undefined,
     idLot: lm.getIdLot ? lm.getIdLot() : undefined,
     date_enregistrement: lm.getDateEnregistrement ? lm.getDateEnregistrement() : undefined,
-    quantite: lm.getQuantite ? lm.getQuantite() : undefined
+    quantite: lm.getQuantite ? lm.getQuantite() : undefined,
+    nb_femelles: lm.getNbFemelles ? lm.getNbFemelles() : undefined,
+    nb_males: lm.getNbMales ? lm.getNbMales() : undefined,
   };
 }
 
@@ -47,7 +49,12 @@ class LotMortController {
         });
       }
 
-      const lm = new LotMortClass(idLot, quantite, date_enregistrement);
+      const lot = await LotDAO.getByIdWithRace(idLot);
+      const tauxFemelleMort = Number(lot?.taux_mort_femelle ?? 50);
+      const nbFemelles = Math.max(0, Math.round(quantite * (tauxFemelleMort / 100)));
+      const nbMales = Math.max(0, quantite - nbFemelles);
+
+      const lm = new LotMortClass(idLot, quantite, date_enregistrement, nbFemelles, nbMales);
       const result = await LotMortDAO.create(lm);
       res.status(201).json({ ok: true, result });
     } catch (err) {
@@ -59,8 +66,8 @@ class LotMortController {
   static async update(req, res) {
     try {
       const id = parseInt(req.params.id);
-      const { idLot, date_enregistrement, quantite } = req.body;
-      const lm = new LotMortClass(idLot, quantite, date_enregistrement);
+      const { idLot, date_enregistrement, quantite, nb_femelles, nb_males } = req.body;
+      const lm = new LotMortClass(idLot, quantite, date_enregistrement, nb_femelles ?? null, nb_males ?? null);
       lm.setId(id);
       const result = await LotMortDAO.update(lm);
       res.json({ ok: true, result });

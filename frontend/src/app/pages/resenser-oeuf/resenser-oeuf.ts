@@ -41,8 +41,8 @@ export class ResenserOeufComponent implements OnInit {
         this.errorMessage = '';
         this.oeuf = { idLot: 0, date_ponte: '', quantite: 0 };
       },
-      error: () => {
-        this.errorMessage = 'Impossible d\'enregistrer les œufs';
+      error: (err) => {
+        this.errorMessage = err?.error?.error || 'Impossible d\'enregistrer les œufs';
         this.successMessage = '';
       }
     });

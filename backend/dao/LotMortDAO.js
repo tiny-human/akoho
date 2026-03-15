@@ -7,7 +7,7 @@ class LotMortDAO {
       const pool = await poolPromise;
       const result = await pool.request().query('SELECT * FROM mort');
       return result.recordset.map(row => {
-        const lm = new LotMort(row.idLot, row.quantite, row.date_enregistrement);
+        const lm = new LotMort(row.idLot, row.quantite, row.date_enregistrement, row.nb_femelles, row.nb_males);
         lm.setId(row.id);
         return lm;
       });
@@ -36,8 +36,10 @@ class LotMortDAO {
       const result = await pool.request()
         .input('idLot', sql.Int, lm.getIdLot())
         .input('quantite', sql.Int, lm.getQuantite())
+        .input('nb_femelles', sql.Int, lm.getNbFemelles())
+        .input('nb_males', sql.Int, lm.getNbMales())
         .input('date_enregistrement', sql.DateTime, lm.getDateEnregistrement())
-        .query('INSERT INTO mort (idLot, quantite, date_enregistrement) OUTPUT INSERTED.* VALUES (@idLot, @quantite, @date_enregistrement)');
+        .query('INSERT INTO mort (idLot, quantite, nb_femelles, nb_males, date_enregistrement) OUTPUT INSERTED.* VALUES (@idLot, @quantite, @nb_femelles, @nb_males, @date_enregistrement)');
       return result.recordset[0];
     } catch (err) {
       console.error('Erreur création lot_mort:', err);
@@ -52,8 +54,10 @@ class LotMortDAO {
         .input('id', sql.Int, lm.getId())
         .input('idLot', sql.Int, lm.getIdLot())
         .input('quantite', sql.Int, lm.getQuantite())
+        .input('nb_femelles', sql.Int, lm.getNbFemelles())
+        .input('nb_males', sql.Int, lm.getNbMales())
         .input('date_enregistrement', sql.DateTime, lm.getDateEnregistrement())
-        .query('UPDATE mort SET idLot = @idLot, quantite = @quantite, date_enregistrement = @date_enregistrement WHERE id = @id');
+        .query('UPDATE mort SET idLot = @idLot, quantite = @quantite, nb_femelles = @nb_femelles, nb_males = @nb_males, date_enregistrement = @date_enregistrement WHERE id = @id');
       return result;
     } catch (err) {
       console.error('Erreur mise à jour lot_mort:', err);
@@ -80,7 +84,7 @@ class LotMortDAO {
         .input('idLot', sql.Int, idLot)
         .query('SELECT * FROM mort WHERE idLot = @idLot');
       return result.recordset.map(row => {
-        const lm = new LotMort(row.idLot, row.quantite, row.date_enregistrement);
+        const lm = new LotMort(row.idLot, row.quantite, row.date_enregistrement, row.nb_femelles, row.nb_males);
         lm.setId(row.id);
         return lm;
       });

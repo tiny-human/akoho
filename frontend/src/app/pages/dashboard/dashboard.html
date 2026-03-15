@@ -5,7 +5,6 @@
     <a routerLink="/dashboard" class="nav-link active"> Dashboard</a>
     <a routerLink="/ajouter-lot" class="nav-link"> Ajouter lot</a>
     <a routerLink="/resenser-oeuf" class="nav-link"> Recenser œufs</a>
-    <a routerLink="/oeuf-eclot" class="nav-link"> Éclosion</a>
     <a routerLink="/ajouter-mort" class="nav-link"> Morts</a>
   </nav>
 
@@ -49,6 +48,7 @@
             <th>PV poulets (Ar)</th>
             <th>Œufs</th>
             <!-- <th>Éclos</th> -->
+            <th>Perte éclosion (Ar)</th>
             <th>PV œufs (Ar)</th>
             <th>Bénéfice (Ar)</th>
           </tr>
@@ -69,6 +69,7 @@
               <td class="right">{{ fmt(r.PV) }}</td>
               <td class="center">{{ r.quantite_oeuf }}</td>
               <!-- <td class="center">{{ r.oeufs_eclos }}</td> -->
+              <td class="right">{{ fmt(r.perte_eclosion || 0) }}</td>
               <td class="right">{{ fmt(r.PV_oeuf) }}</td>
               <td class="right" [class]="benefClass(r.benef)">
                 {{ fmt(r.benef) }}
