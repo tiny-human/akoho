@@ -1,1 +1,1 @@
-DELETE FROM lot;
+select * from oeuf

@@ -1,5 +1,6 @@
 const LotDAO = require('../dao/LotDAO');
 const LotClass = require('../model/Lot');
+const RaceDAO = require('../dao/RaceDAO');
 
 function modelToPlain(l) {
     if (!l) return null;
@@ -42,18 +43,65 @@ class LotController {
 
     static async create(req, res) {
         try {
-                        const { idRace, quantite, date_enregistrement, age, PA, nb_femelles, nb_males, potentiel_oeufs_total, perte_eclosion } = req.body;
-                        const l = new LotClass(
-                            idRace,
-                            quantite,
-                            date_enregistrement,
-                            age,
-                            PA,
-                            nb_femelles ?? null,
-                            nb_males ?? null,
-                            potentiel_oeufs_total ?? null,
-                            perte_eclosion ?? null
-                        );
+            const {
+                idRace,
+                quantite,
+                date_enregistrement,
+                age,
+                PA,
+                nb_femelles,
+                nb_males,
+                potentiel_oeufs_total,
+                perte_eclosion,
+                source,
+                nbOeufsInit
+            } = req.body;
+
+            // Charger la race pour taux_femelle et capacite_ponte
+            const race = await RaceDAO.getById(idRace);
+
+            const qte = Number(quantite || 0);
+            let nbFem = nb_femelles ?? null;
+            let nbM = nb_males ?? null;
+            let perte = perte_eclosion ?? null;
+            let potentiel = potentiel_oeufs_total ?? null;
+
+            if (source === 'eclosion') {
+                const tauxFem = race && race.taux_femelle != null ? Number(race.taux_femelle) : 50;
+                if (nbFem == null && nbM == null) {
+                    nbFem = Math.round(qte * (tauxFem / 100));
+                    nbM = qte - nbFem;
+                }
+                if (perte == null && nbOeufsInit != null) {
+                    const init = Number(nbOeufsInit || 0);
+                    perte = init > 0 ? (init - qte) / init : 0;
+                }
+            } else {
+                // lot parent ou achat : considérer tout comme femelles si non fourni
+                if (nbFem == null && nbM == null) {
+                    nbFem = qte;
+                    nbM = 0;
+                }
+                perte = perte ?? null;
+            }
+
+            if (potentiel == null) {
+                const cap = race && race.capacite_ponte != null ? Number(race.capacite_ponte) : null;
+                potentiel = (nbFem != null && cap != null) ? (nbFem * cap) : null;
+            }
+
+            const l = new LotClass(
+                idRace,
+                quantite,
+                date_enregistrement,
+                age,
+                PA,
+                nbFem,
+                nbM,
+                potentiel,
+                perte
+            );
+
             const result = await LotDAO.create(l);
             res.status(201).json({ ok: true, result });
         } catch (err) {
